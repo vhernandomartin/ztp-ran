@@ -40,7 +40,7 @@ tree
 ## Pre requisites
 In order to have this ZTP workflow working it will be necessary to have the following items in place:
 - OpenShift Cluster acting as a Hub Cluster.
-- RHACM (Red Hat Advanced Cluster Management) installed in the Hub Cluster. MultiClusterHub, hive and AssistedServiceConfig needs to be deployed and configured.
+- RHACM (Red Hat Advanced Cluster Management) installed in the Hub Cluster. MultiClusterHub, hive and AssistedServiceConfig needs to be deployed and configured. To deploy RHACM and configure the required ACM objects you can follow the steps of this [repo](https://github.com/vhernandomartin/ocp4-ipibm-acm-ztp.git), follow the steps from the beginning until #15 AgentServiceConfig.
 - Deploy the openshift-gitops-operator in the Hub Cluster.
 - Configure and deploy the ArgoCD applications responsible for synchronizing both SiteConfigs and Policies.
 
