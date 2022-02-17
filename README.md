@@ -46,7 +46,9 @@ In order to have this ZTP workflow working it will be necessary to have the foll
 
 ## Configurations
 
+
 ### pre-reqs
+
 This directory contains the objects that needs to be created manually as a pre step before creating the SiteConfigs and PolicyGenTemplate and Policies CRs.
 Just create this objects using the following commmand:
 ```
