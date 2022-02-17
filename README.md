@@ -46,10 +46,9 @@ In order to have this ZTP workflow working it will be necessary to have the foll
 
 ## Configurations
 
-
 ### pre-reqs
-
 This directory contains the objects that needs to be created manually as a pre step before creating the SiteConfigs and PolicyGenTemplate and Policies CRs.
+
 Just create this objects using the following commmand:
 ```
 $ oc apply -k pre-reqs/
@@ -60,10 +59,10 @@ In this path we place the SiteConfig CRs, this CRs represents the configuration 
 
 ### site-policies
 Here we define the policies we want to apply in our OpenShift Managed clusters. In terms of Policies here we will find two different types of CRs: PolicyGenTemplate and Policy.
+
 The Policy is a simple Policy configuration where we set certain configuration or actions that needs to be applied or executed in the cluster, while the PolicyGenTemplate is a template that it can be used to enable, deploy and configure certain operators and configurations, like: PAO (Performance Addon Operator), SRIOV Operator, LSO (Local Storage Operator), etc.
 
 ## Procedure
-Before starting, it is necessary to create your own git repository and place the files configured based on your requirements and configurations.
-
-The first step is to create the dependent objects, those objects like namespaces, secrets among others need to be created manually as mentioned in the ***pre-reqs*** section.
-Once the pre-reqs objects are created, it's time to enable the deployments just commiting and pushing the SiteConfigs and Policies placed in your git repo.
+- Before starting, it is necessary to create your own git repository and place the files configured based on your requirements and configurations.
+- The first step is to create the dependent objects, those objects like namespaces, secrets among others need to be created manually as mentioned in the ***pre-reqs*** section.
+- Once the pre-reqs objects are created, it's time to enable the deployments just commiting and pushing the SiteConfigs and Policies placed in your git repo.
