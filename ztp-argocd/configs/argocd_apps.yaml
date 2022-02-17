@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: clusters-sub
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: clusters
+  namespace: openshift-gitops
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: clusters-sub
+  project: ztp-app-project
+  source:
+    path: site-configs
+    repoURL: http://services.test.redhat.lab:10080/kubeadmin/ztp-ran.git
+    targetRevision: master
+    # uncomment the below plugin if you will be adding the plugin binaries in the same repo->dir where
+    # the sitconfig.yaml exist AND use the ../../hack/patch-argocd-dev.sh script to re-patch the deployment-repo-server
+#    plugin:
+#      name: kustomize-with-local-plugins
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+$ cat deployment/policies-app.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: policies-sub
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: policies
+  namespace: openshift-gitops
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: policies-sub
+  project: policy-app-project
+  source:
+    path: site-policies
+    repoURL: http://services.test.redhat.lab:10080/kubeadmin/ztp-ran.git
+    targetRevision: master
+    # uncomment the below plugin if you will be adding the plugin binaries in the same repo->dir where
+    # the policyGenTemplate.yaml exist AND use the ../../hack/patch-argocd-dev.sh script to re-patch the deployment-repo-server
+#    plugin:
+#      name: kustomize-with-local-plugins
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
