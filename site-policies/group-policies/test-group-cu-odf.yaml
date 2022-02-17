@@ -1,0 +1,258 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    ran.openshift.io/ztp-deploy-wave: "2"
+  labels:
+    app.kubernetes.io/instance: policies
+  name: test-group-cu-odf-sub-pol
+  namespace: test-group-pol
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: test-group-cu-odf-sub-pol-conf
+      spec:
+        namespaceselector:
+          exclude:
+          - kube-*
+          include:
+          - '*'
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "2"
+                workload.openshift.io/allowed: management
+              name: openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1
+            kind: OperatorGroup
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "2"
+              name: odf-operator-group
+              namespace: openshift-storage
+            spec:
+              targetNamespaces:
+              - openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: operators.coreos.com/v1alpha1
+            kind: Subscription
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "2"
+              name: odf-operator
+              namespace: openshift-storage
+            spec:
+              channel: "stable-4.9"
+              installPlanApproval: Automatic
+              name: odf-operator
+              source: redhat-operators
+              sourceNamespace: openshift-marketplace
+        remediationAction: enforce
+        severity: low
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    ran.openshift.io/ztp-deploy-wave: "10"
+  labels:
+    app.kubernetes.io/instance: policies
+  name: test-group-cu-odf-conf-pol
+  namespace: test-group-pol
+spec:
+  disabled: false
+  policy-templates:
+  - objectDefinition:
+      apiVersion: policy.open-cluster-management.io/v1
+      kind: ConfigurationPolicy
+      metadata:
+        name: test-group-cu-odf-pol-conf
+      spec:
+        namespaceselector:
+          exclude:
+          - kube-*
+          include:
+          - '*'
+        object-templates:
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "10"
+              name: rook-ceph-operator-config
+              namespace: openshift-storage
+            data:
+              CSI_LOG_LEVEL: "5"
+              CSI_PLUGIN_TOLERATIONS: |2-
+
+                - key: node.ocs.openshift.io/storage
+                  operator: Equal
+                  value: "true"
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  effect: NoSchedule
+              CSI_PROVISIONER_TOLERATIONS: |2-
+
+                - key: node.ocs.openshift.io/storage
+                  operator: Equal
+                  value: "true"
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  effect: NoSchedule
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: odf.openshift.io/v1alpha1
+            kind: StorageSystem
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "10"
+              name: odf-storagesystem
+              namespace: openshift-storage
+            spec:
+              kind: storagecluster.ocs.openshift.io/v1
+              name: ocs-storagecluster
+              namespace: openshift-storage
+        - complianceType: musthave
+          objectDefinition:
+            apiVersion: ocs.openshift.io/v1
+            kind: StorageCluster
+            metadata:
+              annotations:
+                ran.openshift.io/ztp-deploy-wave: "10"
+              name: ocs-storagecluster
+              namespace: openshift-storage
+            spec:
+              monDataDirHostPath: /var/lib/rook
+              arbiter: {}
+              encryption:
+                kms: {}
+              externalStorage: {}
+              managedResources:
+                cephBlockPools: {}
+                cephConfig: {}
+                cephDashboard: {}
+                cephFilesystems: {}
+                cephObjectStoreUsers: {}
+                cephObjectStores: {}
+              nodeTopologies: {}
+              placement:
+                all:
+                  tolerations:
+                    - key: node-role.kubernetes.io/master
+                      effect: NoSchedule
+                    - key: node.ocs.openshift.io/storage
+                      effect: NoSchedule
+                      operator: Equal
+                      value: "true"
+                mds:
+                  tolerations:
+                    - key: node-role.kubernetes.io/master
+                      effect: NoSchedule
+                    - key: node.ocs.openshift.io/storage
+                      effect: NoSchedule
+                      operator: Equal
+                      value: "true"
+                noobaa-core:
+                  tolerations:
+                    - key: node-role.kubernetes.io/master
+                      effect: NoSchedule
+                    - key: node.ocs.openshift.io/storage
+                      effect: NoSchedule
+                      operator: Equal
+                      value: "true"
+                rgw:
+                  tolerations:
+                    - key: node-role.kubernetes.io/master
+                      effect: NoSchedule
+                    - key: node.ocs.openshift.io/storage
+                      effect: NoSchedule
+                      operator: Equal
+                      value: "true"
+              resources:
+                mds:
+                  limits:
+                    cpu: "3"
+                    memory: 8Gi
+                  requests:
+                    cpu: "1"
+                    memory: 8Gi
+                rgw:
+                  limits:
+                    cpu: "2"
+                    memory: 4Gi
+                  requests:
+                    cpu: "1"
+                    memory: 4Gi
+              storageDeviceSets:
+                - config: {}
+                  count: 1
+                  dataPVCTemplate:
+                    metadata: {}
+                    spec:
+                      accessModes:
+                        - ReadWriteOnce
+                      resources:
+                        requests:
+                          storage: 1
+                      storageClassName: lso-sc
+                      volumeMode: Block
+                    status: {}
+                  name: ocs-deviceset-lso-sc
+                  placement: {}
+                  preparePlacement: {}
+                  replica: 3
+                  resources:
+                    limits:
+                      cpu: "2"
+                      memory: 5Gi
+                    requests:
+                      cpu: "1"
+                      memory: 5Gi
+              version: 4.9.0
+        remediationAction: enforce
+        severity: low
+  remediationAction: enforce
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  annotations:
+    policy.open-cluster-management.io/categories: CM Configuration Management
+    policy.open-cluster-management.io/controls: CM-2 Baseline Configuration
+    policy.open-cluster-management.io/standards: NIST SP 800-53
+    ran.openshift.io/ztp-deploy-wave: "2"
+  labels:
+    app.kubernetes.io/instance: policies
+  name: test-group-cu-odf-placebind
+  namespace: test-group-pol
+placementRef:
+  apiGroup: apps.open-cluster-management.io
+  kind: PlacementRule
+  name: test-group-cu-placementrules
+subjects:
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: test-group-cu-odf-sub-pol
+- apiGroup: policy.open-cluster-management.io
+  kind: Policy
+  name: test-group-cu-odf-conf-pol

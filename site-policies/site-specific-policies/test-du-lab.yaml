@@ -1,0 +1,23 @@
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "test-du-lab"
+  namespace: "test-du-lab-policies"
+spec:
+  bindingRules:
+    sites: "test-du-lab"
+  mcp: "master"
+  remediationAction: enforce
+  sourceFiles: 
+    - fileName: SriovNetworkNodePolicy.yaml
+      policyName: "sriov-netd-conf-policy"
+      metadata:
+        name: "melCX5-1"
+      spec:
+        deviceType: netdevice
+        isRdma: true
+        nicSelector:
+          pfNames: ["ens7f0"]
+        numVfs: 8
+        priority: 10
+        resourceName: melCX5-1

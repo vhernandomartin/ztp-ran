@@ -1,0 +1,11 @@
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "test-cu-lab"
+  namespace: "test-cu-lab-policies"
+spec:
+  bindingRules:
+    sites: "test-cu-lab"
+  mcp: "master"
+  remediationAction: enforce
+  sourceFiles: []

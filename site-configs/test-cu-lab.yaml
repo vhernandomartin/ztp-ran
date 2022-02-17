@@ -1,0 +1,249 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "test-cu-lab"
+  namespace: "test-cu-lab"
+spec:
+  baseDomain: "test.redhat.lab"
+  pullSecretRef:
+    name: "assisted-deployment-pull-secret"
+  clusterImageSetNameRef: "openshift-v4.9.12"
+  sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZp6zEuOxizAV0lsyhCd1fhpn7IR5YGcgK79AHYWsNNxeZDJ8Wr/D4xlh9OybvHP+k6K4AIS/0Mhp9UOM9z9Y21N/r0lGBywjPmmOCnB2cUWBOABq3ewU3ATFBcTkXMo1eZ3a5IRLuYUXbYmdFmzFz3sHOLqr7YnOdn/LoqnIe1QKcEudESkMUa2zz+vhQVkovHvN/ZkE+7eSGK4hodnyXdUdlqOrwsJyzrP4twHIl/L7DsIWIDaPwJq+lCvrmzNIBh+n+NKcK1MnabNRGaUu/Yfjkdivy3VNMrTCQHfg3r12OTZCw38bmNGbPZ5kB2xRPbk3bCPrwG0yyhwmDhVNATbR946ubWWauvdQCd8FGLJpKr+pKnFp8Qub1GL2qgJUAiZ87XXVhh1WsIn/yvcF30S571mX1BUYlk5zbeBvjvaE4i3jNy0saUM8Yof7g5X9U40kCiq/AnuIWO7pJWP9Y2NHeJjM1XQYScZpwwe9zQyR9LDryll0GdBSx+5te5N8= kubeadmin@services"
+  clusters: 
+  - clusterName: "cu-compact-1"
+    clusterLabels:
+      test-common-policies: true
+      test-group-cu: ""
+      test-cu-lab: ""
+      sites : "test-cu-lab"
+      redeploy: "2"
+    networkType: "OVNKubernetes"
+    clusterNetwork:
+      - cidr: 10.128.0.0/14
+        hostPrefix: 23
+    machineNetwork:
+      - cidr: 10.1.34.0/25
+    serviceNetwork:
+      - 172.30.0.0/16
+    additionalNTPSources:
+      - 10.1.34.20
+    apiVIP: 10.1.34.60
+    ingressVIP: 10.1.34.61
+    nodes:
+      - hostName: "cu-master1.test.redhat.lab"
+        role: master
+        bmcAddress: idrac-virtualmedia://10.1.34.230/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "bmc-secret1"
+        bootMACAddress: "B4:96:91:BE:B0:14"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: 0:2:0:0
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno8303
+                type: ethernet
+                state: down
+              - name: eno8403
+                type: ethernet
+                state: down
+              - name: bond0
+                type: bond
+                mac-address: "B4:96:91:BE:B0:14"
+                link-aggregation:
+                  mode: 802.3ad
+                  options:
+                    miimon: "140"
+                  port:
+                    - eno12399
+                    - eno12409
+                state: up
+              - name: bond0.34
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 34
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.34.51
+                      prefix-length: 25
+                  dhcp: false
+                ipv6:
+                  enabled: false
+              - name: bond0.111
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 111
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.111.21
+                      prefix-length: 24
+                  dhcp: false
+                ipv6:
+                  enabled: false
+            dns-resolver:
+              config:
+                server:
+                  - 10.1.34.20
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 10.1.34.1
+                  next-hop-interface: bond0.34
+                  table-id: 254
+          interfaces:
+            - name: "eno12399"
+              macAddress: "B4:96:91:BE:B0:14"
+            - name: "eno12409"
+              macAddress: "B4:96:91:BE:B0:15"
+      - hostName: "cu-master2.test.redhat.lab"
+        role: master
+        bmcAddress: idrac-virtualmedia://10.1.34.231/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "bmc-secret2"
+        bootMACAddress: "B4:96:91:BE:BB:20"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: 0:2:0:0
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno8303
+                type: ethernet
+                state: down
+              - name: eno8403
+                type: ethernet
+                state: down
+              - name: bond0
+                type: bond
+                mac-address: "B4:96:91:BE:BB:20" 
+                link-aggregation:
+                  mode: 802.3ad
+                  options:
+                    miimon: "140"
+                  port:
+                    - eno12399
+                    - eno12409
+                state: up
+              - name: bond0.34
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 34
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.34.52
+                      prefix-length: 25
+                  dhcp: false
+                ipv6:
+                  enabled: false
+              - name: bond0.111
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 111
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.111.22
+                      prefix-length: 24
+                  dhcp: false
+                ipv6:
+                  enabled: false
+            dns-resolver: 
+              config:
+                server:
+                  - 10.1.34.20
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 10.1.34.1
+                  next-hop-interface: bond0.34
+                  table-id: 254
+          interfaces:
+            - name: "eno12399"
+              macAddress: "B4:96:91:BE:BB:20"
+            - name: "eno12409"
+              macAddress: "B4:96:91:BE:BB:21"
+      - hostName: "cu-master3.test.redhat.lab"
+        role: master
+        bmcAddress: idrac-virtualmedia://10.1.34.232/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "bmc-secret3"
+        bootMACAddress: "B4:96:91:BE:B2:D4"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: 0:2:0:0
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno8303
+                type: ethernet
+                state: down
+              - name: eno8403
+                type: ethernet
+                state: down
+              - name: bond0
+                type: bond
+                mac-address: "B4:96:91:BE:B2:D4"
+                link-aggregation:
+                  mode: 802.3ad
+                  options:
+                    miimon: "140"
+                  port:
+                    - eno12399
+                    - eno12409
+                state: up
+              - name: bond0.34
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 34
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.34.53
+                      prefix-length: 25
+                  dhcp: false
+                ipv6:
+                  enabled: false
+              - name: bond0.111
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 111
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.111.23
+                      prefix-length: 24
+                  dhcp: false
+                ipv6:
+                  enabled: false
+            dns-resolver:
+              config:
+                server:
+                  - 10.1.34.20
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 10.1.34.1
+                  next-hop-interface: bond0.34
+                  table-id: 254
+          interfaces:
+            - name: "eno12399"
+              macAddress: "B4:96:91:BE:B2:D4"
+            - name: "eno12409"
+              macAddress: "B4:96:91:BE:B2:D5"

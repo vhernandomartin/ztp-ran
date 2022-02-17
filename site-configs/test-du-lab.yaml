@@ -1,0 +1,155 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: SiteConfig
+metadata:
+  name: "test-lab"
+  namespace: "test-lab"
+spec:
+  baseDomain: "test.redhat.lab"
+  pullSecretRef:
+    name: "assisted-deployment-pull-secret"
+  clusterImageSetNameRef: "openshift-v4.9.12"
+  sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDZp6zEuOxizAV0lsyhCd1fhpn7IR5YGcgK79AHYWsNNxeZDJ8Wr/D4xlh9OybvHP+k6K4AIS/0Mhp9UOM9z9Y21N/r0lGBywjPmmOCnB2cUWBOABq3ewU3ATFBcTkXMo1eZ3a5IRLuYUXbYmdFmzFz3sHOLqr7YnOdn/LoqnIe1QKcEudESkMUa2zz+vhQVkovHvN/ZkE+7eSGK4hodnyXdUdlqOrwsJyzrP4twHIl/L7DsIWIDaPwJq+lCvrmzNIBh+n+NKcK1MnabNRGaUu/Yfjkdivy3VNMrTCQHfg3r12OTZCw38bmNGbPZ5kB2xRPbk3bCPrwG0yyhwmDhVNATbR946ubWWauvdQCd8FGLJpKr+pKnFp8Qub1GL2qgJUAiZ87XXVhh1WsIn/yvcF30S571mX1BUYlk5zbeBvjvaE4i3jNy0saUM8Yof7g5X9U40kCiq/AnuIWO7pJWP9Y2NHeJjM1XQYScZpwwe9zQyR9LDryll0GdBSx+5te5N8= kubeadmin@services"
+  clusters:
+  - clusterName: "du-sno-1"
+    clusterLabels:
+      test-group-du: ""
+      test-lab: ""
+      test-common-policies: true
+      sites : "test-du-lab"
+    networkType: "OVNKubernetes"
+    clusterNetwork:
+      - cidr: 10.136.0.0/14
+        hostPrefix: 23
+    machineNetwork:
+      - cidr: 10.1.34.0/25
+    serviceNetwork:
+      - 172.31.0.0/16
+    additionalNTPSources:
+      - 10.1.34.20
+    nodes:
+      - hostName: "du-sno-1"
+        role: master
+        bmcAddress: idrac-virtualmedia://10.1.34.240/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "bmc-secret1"
+        bootMACAddress: "b4:96:91:ba:b5:f9"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: /dev/sdb
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno12409
+                type: ethernet
+                state: up
+                ipv4:
+                  enabled: true
+                  dhcp: false
+                  address:
+                    - ip: 10.1.34.21
+                      prefix-length: 25
+                ipv6:
+                  enabled: false
+            dns-resolver:
+              config:
+                server:
+                  - 10.1.34.20
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 10.1.34.1
+                  next-hop-interface: eno12409
+                  table-id: 254
+          interfaces:
+            - name: "eno12409"
+              macAddress: "b4:96:91:ba:b5:f9"
+  - clusterName: "du-sno-2"
+    clusterLabels:
+      test-group-du: ""
+      test-lab: ""
+      test-common-policies: true
+      sites : "test-du-lab"
+    networkType: "OVNKubernetes"
+    clusterNetwork:
+      - cidr: 10.132.0.0/14
+        hostPrefix: 23
+    machineNetwork:
+      - cidr: 10.1.34.0/25
+    serviceNetwork:
+      - 172.33.0.0/16
+    additionalNTPSources:
+      - 10.1.34.20
+    nodes:
+      - hostName: "du-sno-2"
+        role: master
+        bmcAddress: idrac-virtualmedia://10.1.34.238/redfish/v1/Systems/System.Embedded.1
+        bmcCredentialsName:
+          name: "bmc-secret1"
+        bootMACAddress: "B4:96:91:BE:B0:41"
+        bootMode: "UEFI"
+        rootDeviceHints:
+          deviceName: /dev/sdb
+        nodeNetwork:
+          config:
+            interfaces:
+              - name: eno8303
+                type: ethernet
+                state: down
+              - name: eno8403
+                type: ethernet
+                state: down
+              - name: bond0
+                type: bond
+                mac-address: "B4:96:91:BE:B0:41"
+                link-aggregation:
+                  mode: 802.3ad
+                  options:
+                    miimon: "140"
+                  port:
+                    - eno12399
+                    - eno12409
+                state: up
+              - name: bond0.34
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 34
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.34.22
+                      prefix-length: 25
+                  dhcp: false
+                ipv6:
+                  enabled: false
+              - name: bond0.111
+                type: vlan
+                vlan:
+                  base-iface: bond0
+                  id: 111
+                state: up
+                ipv4:
+                  enabled: true
+                  address:
+                    - ip: 10.1.111.10
+                      prefix-length: 24
+                  dhcp: false
+                ipv6:
+                  enabled: false
+            dns-resolver:
+              config:
+                server:
+                  - 10.1.34.20
+            routes:
+              config:
+                - destination: 0.0.0.0/0
+                  next-hop-address: 10.1.34.1
+                  next-hop-interface: bond0.34
+                  table-id: 254
+          interfaces:
+            - name: "eno12409"
+              macAddress: "B4:96:91:BE:B0:41"
+            - name: "eno12399"
+              macAddress: "B4:96:91:BE:B0:40"

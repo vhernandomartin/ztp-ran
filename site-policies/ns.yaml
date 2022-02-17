@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-du-lab-policies
+  labels:
+    name: test-du-lab-policies
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-cu-lab-policies
+  labels:
+    name: test-cu-lab-policies
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-com-pol
+  labels:
+    name: test-com-pol
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-group-pol
+  labels:
+    name: test-group-pol

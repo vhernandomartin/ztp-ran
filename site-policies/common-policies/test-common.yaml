@@ -1,0 +1,59 @@
+---
+apiVersion: ran.openshift.io/v1
+kind: PolicyGenTemplate
+metadata:
+  name: "test-com-pol"
+  namespace: "test-com-pol"
+spec:
+  bindingRules:
+    test-common-policies: "true"
+  remediationAction: enforce
+  sourceFiles:
+    - fileName: SriovSubscription.yaml
+      policyName: "sriov-sub-policy"
+      spec:
+        channel: "4.9"
+    - fileName: SriovSubscriptionNS.yaml
+      policyName: "sriov-sub-policy"
+    - fileName: SriovSubscriptionOperGroup.yaml
+      policyName: "sriov-sub-policy"
+    - fileName: PaoSubscription.yaml
+      policyName: "pao-sub-policy"
+      spec:
+        channel: "4.9"
+    - fileName: PaoSubscriptionNS.yaml
+      policyName: "pao-sub-policy"
+    - fileName: PaoSubscriptionOperGroup.yaml
+      policyName: "pao-sub-policy"
+    - fileName: ClusterLogNS.yaml
+      policyName: "clusterlog-sub-policy"
+    - fileName: ClusterLogOperGroup.yaml
+      policyName: "clusterlog-sub-policy"
+    - fileName: ClusterLogSubscription.yaml
+      policyName: "clusterlog-sub-policy"
+    - fileName: StorageNS.yaml
+      policyName: "lso-sub-policy"
+    - fileName: StorageOperGroup.yaml
+      policyName: "lso-sub-policy"
+    - fileName: StorageSubscription.yaml
+      policyName: "lso-sub-policy"
+      spec:
+        channel: "4.9"
+    - fileName: ReduceMonitoringFootprint.yaml
+      policyName: "monitoring-conf-policy"
+    - fileName: OperatorHub.yaml
+      policyName: "operatorhub-config-policy"
+    - fileName: DefaultCatsrc.yaml
+      policyName: "catsource-conf-policy"
+      metadata:
+        name: redhat-operators
+      spec:
+        displayName: redhat-operators
+        image: registry.test.redhat.lab:5000/olm-index/redhat-operator-index:v4.9
+    - fileName: DisconnectedICSP.yaml
+      policyName: "icsp-conf-policy"
+      spec:
+        repositoryDigestMirrors:
+        - mirrors:
+          - registry.test.redhat.lab:5000
+          source: registry.redhat.io
